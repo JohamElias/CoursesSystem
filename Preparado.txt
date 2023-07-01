@@ -1,0 +1,603 @@
+
+SoftLP2DBManager
+..config
+
+public class DBManager {
+    private static DBManager dbManager;
+    /* Colocar su nombre y código */
+    /* Colocar la url de conexión */
+    private String url = "jdbc:mysql://" +
+            "lab3-lp2-2022-2.cffpkdxvkd7h.us-east-1.rds.amazonaws.com" +
+            ":3306/test?useSSL=false";
+    private String user = "administrador";
+    private String password = "20222lp2";
+    private Connection con;
+    
+    private synchronized static void createInstance(){
+        if(dbManager == null){
+            dbManager = new DBManager();
+        }
+    }
+    
+    public Connection getConnection(){
+        try{
+            //Registrar el Driver (ensamblado) de conexión
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection(url,user,password);
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return con;
+    }
+    
+    public static DBManager getInstance(){
+        if(dbManager == null){
+            createInstance();
+        }
+        return dbManager;
+    }
+}
+
+DBManager
+private String url = "jdbc:mysql://" +
+            "lab3-lp2-2022-2.cffpkdxvkd7h.us-east-1.rds.amazonaws.com" +
+            ":3306/test?useSSL=false";
+    private String user = "administrador";
+    private String password = "20222lp2";
+    private Connection con;
+	
+private String url = "jdbc:mysql://" +
+            "final.cqmofoykhlou.us-east-1.rds.amazonaws.com" +
+            ":3306/lp2?useSSL=false";
+    private String user = "admin";
+    private String password = "examenFinal";
+    private Connection con;
+
+DAO
+
+public interface UsuarioDao {
+    public int insertar(Usuario usuario);
+    public int modificar(Usuario usuario);
+    public int eliminar(int idUsuario);
+    public ArrayList<Usuario> listarTodas();
+    public char verificarUsuario(Usuario usuario);
+    public int cambiarUsername(int idUsuario,String username);
+    public int cambiarPassword(int idUsuario,String password);
+}
+
+MySql
+
+Variables necesarias
+private Connection con;
+    private ResultSet rs;
+    private CallableStatement cs;
+
+Listar
+ @Override
+    public ArrayList<Usuario> listarTodas() {
+        ArrayList<Usuario> usuarios = new ArrayList<>();
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call LISTAR_USUARIO_TODOS()}");
+            rs = cs.executeQuery();
+            while(rs.next()){
+                Usuario us = new Usuario();
+                us.setIdUsuario(rs.getInt("idUsuario"));
+                us.setUsername(rs.getString("username"));
+                us.setPassword(rs.getString("password"));
+                us.setTipo(rs.getString("tipo").charAt(0));
+                us.setActivo(true);
+                us.setFidPersona(rs.getInt("idPersona"));
+                if(rs.getInt("idPersona")!= 0){
+                    us.setFidPersona(rs.getInt("idPersona"));
+                }else
+                    us.setFidPersona(-1);
+                usuarios.add(us);
+            }
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{rs.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        return usuarios;
+    }
+
+
+Insertar
+
+ @Override
+    public int insertar(Usuario usuario) {
+        int resultado=0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call INSERTAR_USUARIO(?,?,?,?,?,?)}");
+            cs.registerOutParameter("_idUsuario", 
+                    java.sql.Types.INTEGER);
+            cs.setString("_username", usuario.getUsername());
+            cs.setString("_password", usuario.getPassword());
+            cs.setString("_tipo", String.valueOf(usuario.getTipo()));
+            cs.setBoolean("_activo", true);
+            if(usuario.getFidPersona()!=-1)
+                cs.setInt("_Persona_idPersona", usuario.getFidPersona());
+            else
+                cs.setNull("_Persona_idPersona", Types.INTEGER);
+            cs.executeUpdate();
+            usuario.setIdUsuario(cs.getInt("_idUsuario"));
+            System.out.println("Se inserto un usuario correctamente");
+            resultado = usuario.getIdUsuario();
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        
+        return resultado;
+    }
+
+
+Modificar
+
+    @Override
+    public int modificar(Usuario usuario) {
+        int resultado=0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call MODIFICAR_USUARIO(?,?,?,?,?,?)}");
+            cs.setInt("_idUsuario",usuario.getIdUsuario());
+            cs.setString("_username", usuario.getUsername());
+            cs.setString("_password", usuario.getPassword());
+            cs.setString("_tipo", String.valueOf(usuario.getTipo()));
+            cs.setBoolean("_activo", true);
+            if(usuario.getFidPersona()!=-1)cs.setInt("_Persona_idPersona", usuario.getFidPersona());
+            else
+                cs.setNull("_Persona_idPersona", Types.INTEGER);
+            cs.executeUpdate();
+            System.out.println("Se modifico  un usuario correctamente");
+            resultado = 1;
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        return resultado;
+    }
+
+Eliminar
+
+ @Override
+    public int eliminar(int idUsuario) {
+        int resultado=0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call ELIMINAR_USUARIO(?)}");
+            cs.setInt("_id_usuario", idUsuario);
+            cs.executeUpdate();
+            resultado = 1;
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        System.out.println("Se elimino un usuario correctamente");
+        return resultado;
+    }
+
+6.-Si se desea pasar un dato entre formularios se crea un atributo con getter y setter.
+
+ public partial class frmBusquedaEstudiantes : Form
+    {
+        private Estudiante _estudiante;
+        private EstudianteDAO daoEstudiante;
+        public Estudiante Estudiante { get => _estudiante; set => _estudiante = value; }
+        public frmBusquedaEstudiantes()
+        {
+            InitializeComponent();
+            daoEstudiante = new EstudianteMySQL();
+            dgvEstudiantes.AutoGenerateColumns = false;
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            
+            //dgvEstudiantes.AutoGenerateColumns = false;
+            dgvEstudiantes.DataSource = daoEstudiante.listarPorCodigoPUCPNombre(txtCodigoNombre.Text);
+        }
+
+        private void btnSeleccionar_Click(object sender, EventArgs e)
+        {
+            this.Estudiante = (Estudiante)dgvEstudiantes.CurrentRow.DataBoundItem;
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private void dgvEstudiantes_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            Estudiante estudiante = (Estudiante)dgvEstudiantes.Rows[e.RowIndex].DataBoundItem;
+            dgvEstudiantes.Rows[e.RowIndex].Cells[0].Value = estudiante.CodigoPUCP;
+            dgvEstudiantes.Rows[e.RowIndex].Cells[1].Value = estudiante.Nombre + " " + estudiante.ApellidoPaterno;
+            dgvEstudiantes.Rows[e.RowIndex].Cells[2].Value = estudiante.CRAEST;
+        }
+    }
+
+
+
+Finalmente el main:
+
+
+namespace GameSoft
+{
+    public partial class frmGestionVideojuegos : Form
+    {
+        private string _rutaFotoPortada = "";
+        private Estado _estado;
+        private GeneroDAO daoGenero;
+        private VideojuegoDAO daoVideojuego;
+        private Videojuego videojuego;
+        private int _idDesarrolladora;
+        public frmGestionVideojuegos()
+        {
+            InitializeComponent();
+            _estado = Estado.Inicial;
+            limpiarComponentes();
+            establecerEstadoComponentes();
+            daoGenero = new GeneroMySQL();
+            daoVideojuego = new VideojuegoMySQL();
+            cboGenero.DisplayMember = "Nombre";
+            cboGenero.ValueMember = "IdGenero";
+            cboGenero.DataSource = daoGenero.listarTodas();
+        }
+
+        public void limpiarComponentes()
+        {
+            txtIdVideojuego.Text = "";
+            txtNombre.Text = "";
+            txtDesarrolladora.Text = "";
+            cboGenero.SelectedIndex = -1;
+            rbPlaystation.Checked = false;
+            rbNintendo.Checked = false;
+            rbXbox.Checked = false;
+            nudMaxJugadores.Value = 1;
+            cbCooperativo.Checked = false;
+            cbMultiplayer.Checked = false;
+            cbEdicionEspecial.Checked = false;
+            txtPrecio.Text = "";
+            txtDescripcion.Text = "";
+            pbPortada.Image = null;
+        }
+
+        public void establecerEstadoComponentes()
+        {
+            switch (_estado)
+            {
+                case Estado.Inicial:
+                    btnNuevo.Enabled = true;
+                    btnBuscar.Enabled = true;
+                    btnGuardar.Enabled = false;
+                    btnCancelar.Enabled = false;
+                    btnBuscarDesarrolladora.Enabled = false;
+                    btnSubirPortada.Enabled = false;
+                    txtIdVideojuego.Enabled = false;
+                    txtNombre.Enabled = false;
+                    txtDesarrolladora.Enabled = false;
+                    txtPrecio.Enabled = false;
+                    txtDescripcion.Enabled = false;
+                    cboGenero.Enabled = false;
+                    rbPlaystation.Enabled = false;
+                    rbNintendo.Enabled = false;
+                    rbXbox.Enabled = false;
+                    nudMaxJugadores.Enabled = false;
+                    cbCooperativo.Enabled = false;
+                    cbMultiplayer.Enabled = false;
+                    cbEdicionEspecial.Enabled = false;
+                    break;
+                case Estado.Nuevo:
+                    btnNuevo.Enabled = false;
+                    btnBuscar.Enabled = false;
+                    btnGuardar.Enabled = true;
+                    btnCancelar.Enabled = true;
+                    btnBuscarDesarrolladora.Enabled = true;
+                    btnSubirPortada.Enabled = true;
+                    txtIdVideojuego.Enabled = true;
+                    txtNombre.Enabled = true;
+                    txtDesarrolladora.Enabled = true;
+                    txtPrecio.Enabled = true;
+                    txtDescripcion.Enabled = true;
+                    cboGenero.Enabled = true;
+                    rbPlaystation.Enabled = true;
+                    rbNintendo.Enabled = true;
+                    rbXbox.Enabled = true;
+                    nudMaxJugadores.Enabled = true;
+                    cbCooperativo.Enabled = true;
+                    cbMultiplayer.Enabled = true;
+                    cbEdicionEspecial.Enabled = true;
+                    break;
+            }
+        }
+
+        private void btnSubirPortada_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ofdPortada.ShowDialog() == DialogResult.OK)
+                {
+                    _rutaFotoPortada = ofdPortada.FileName;
+                    pbPortada.Image = Image.FromFile(_rutaFotoPortada);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private void btnCancelar_Click(object sender, EventArgs e)
+        {
+            _estado = Estado.Inicial;
+            establecerEstadoComponentes();
+            limpiarComponentes();
+        }
+
+        private void btnNuevo_Click(object sender, EventArgs e)
+        {
+            _estado = Estado.Nuevo;
+            establecerEstadoComponentes();
+        }
+
+        private void cboGenero_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+
+        }
+
+        private void frmGestionVideojuegos_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnBuscarDesarrolladora_Click(object sender, EventArgs e)
+        {
+            frmBusquedaDesarrolladoras fr = new frmBusquedaDesarrolladoras();
+            fr.ShowDialog();
+            txtDesarrolladora.Text = fr.Desarrolladora.Nombre;
+            _idDesarrolladora = fr.Desarrolladora.IdDesarrolladora;
+        }
+
+        private void btnBuscar_Click(object sender, EventArgs e)
+        {
+            frmBusquedaVideojuegos fr = new frmBusquedaVideojuegos();
+            fr.ShowDialog();
+            txtIdVideojuego.Text= fr.Videojuego.IdVideojuego.ToString();
+            txtDesarrolladora.Text = fr.Videojuego.Desarrolladora.Nombre.ToString();
+            txtNombre.Text = fr.Videojuego.Nombre.ToString();
+            txtDescripcion.Text=fr.Videojuego.Descripcion.ToString();
+            txtPrecio.Text=fr.Videojuego.Precio.ToString();
+            nudMaxJugadores.Value=fr.Videojuego.MaxJugadores;
+
+            if (fr.Videojuego.Plataforma=='P')
+                rbPlaystation.Checked = true;
+            else if(fr.Videojuego.Plataforma=='X')
+                rbXbox.Checked = true;
+            else if(fr.Videojuego.Plataforma=='N')
+                rbNintendo.Checked = true;
+
+            if (fr.Videojuego.Cooperativo) cbCooperativo.Checked = true;
+            else cbCooperativo.Checked = false;
+            if (fr.Videojuego.EdicionEspecial) cbEdicionEspecial.Checked = true;
+            else cbEdicionEspecial.Checked = false;
+            if (fr.Videojuego.Multiplayer) cbMultiplayer.Checked= true;
+            else cbMultiplayer.Checked = false;
+            MemoryStream ms = new MemoryStream(fr.Videojuego.Portada);
+            pbPortada.Image = new Bitmap(ms);
+        }
+
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            videojuego=new Videojuego();
+            //videojuego.IdVideojuego = int.Parse(txtIdVideojuego.Text);
+            videojuego.Nombre=txtNombre.Text;
+            videojuego.Desarrolladora = new Desarrolladora();
+            videojuego.Desarrolladora.IdDesarrolladora = _idDesarrolladora;
+            videojuego.Descripcion = txtDescripcion.Text;
+            videojuego.Precio=Double.Parse(txtPrecio.Text);
+            if (rbPlaystation.Checked)
+                videojuego.Plataforma = 'P';
+            else if (rbNintendo.Checked)
+                videojuego.Plataforma = 'N';
+            else if (rbXbox.Checked)
+                videojuego.Plataforma = 'X';
+            videojuego.Genero=new Genero();
+            videojuego.Genero.IdGenero = (int)cboGenero.SelectedValue;
+            if (cbCooperativo.Checked) videojuego.Cooperativo=true;
+            else videojuego.Cooperativo = false;
+            if (cbEdicionEspecial.Checked) videojuego.EdicionEspecial = true;
+            else videojuego.EdicionEspecial = false;
+            if (cbMultiplayer.Checked) videojuego.Multiplayer = true;
+            else videojuego.Multiplayer = false;
+            videojuego.MaxJugadores=(int)nudMaxJugadores.Value;
+            FileStream fs = new FileStream(_rutaFotoPortada, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new BinaryReader(fs);
+            videojuego.Portada = br.ReadBytes((int)fs.Length);
+            fs.Close();
+            int resultado = daoVideojuego.insertar(videojuego);
+            if (resultado != 0)
+            {
+                MessageBox.Show("Se ha registrado con éxito", "Mensaje de confirmación", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtIdVideojuego.Text = resultado.ToString();
+                _estado = Estado.Inicial;
+                establecerEstadoComponentes();
+            }
+            else
+                MessageBox.Show("Ha ocurrido un error con el registro", "Mensaje de error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+}
+
+
+
+Por si piden eliminar:
+
+private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            DialogResult resultadoInteraccion = MessageBox.Show("¿Está seguro de que desea eliminar a este empleado","Mensaje de Confirmación",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
+            if(resultadoInteraccion == DialogResult.Yes)
+            {
+                int resultado = daoEmpleado.eliminar(empleado.IdPersona);
+                if(resultado != 0)
+                {
+                    MessageBox.Show("Se ha eliminado correctamente","Mensaje de Confirmación",MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    estado = Estado.Inicial;
+                    establecerEstadoFormulario();
+                }
+                else
+                {
+                    MessageBox.Show("Ha ocurrido un error al momento de eliminar","Mensaje de error", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }
+            }
+        }
+----------------------------------------------------------------------------------------------------
+Leer nulos
+if(!lector.IsDBNull(lector.GetOrdinal("id_persona")))
+	cliente.IdPersona = lector.GetInt32("id_persona");
+
+if(nombre==null)
+cs.setNull("_nombre",java.sql.Types.VARCHAR);
+
+
+SERVIDOR:
+
+public class Servidor {
+    private static String puerto = "1234";
+    private static String IP = "127.0.0.1";
+    
+    public static void main(String[]args){
+        try{
+            System.setProperty("java.remi.server.hostname", IP);
+            LocateRegistry.createRegistry(Integer.parseInt(puerto));
+            //Creamos las instancias de los objetos remotos
+            CursoDAO objDAOCurso = new CursoMySQL(Integer.parseInt(puerto));
+            EspecialidadDAO objDAOEspecialidad = new EspecialidadMySQL(Integer.parseInt(puerto));
+            //Hacemos los obejtos disponibles de forma remota
+            Naming.rebind("//"+IP+":"+puerto+"/"+"daoCurso",objDAOCurso);
+            Naming.rebind("//"+IP+":"+puerto+"/"+"daoEspecialidad",objDAOEspecialidad);
+            
+            System.out.println("El servidor se ha inicializado correctamente...");
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+    
+}
+
+Cliente
+
+private static String puerto = "1234";
+    private static String IP = "127.0.0.1";
+    public static void main(String[] args){
+        try{
+            CursoDAO objDAOCurso = (CursoDAO)Naming.lookup("//"+IP+":"+puerto+"/"+"daoCurso");
+            ArrayList<Curso> cursos=objDAOCurso.listarCursosPorNombre("");
+            EspecialidadDAO objDAOEspecialidad = (EspecialidadDAO)Naming.lookup("//"+IP+":"+puerto+"/"+"daoEspecialidad");
+            ArrayList<Especialidad> especialidades=objDAOEspecialidad.listarTodas();
+            for(Especialidad e : especialidades){
+                System.out.println(e.getIdEspecialidad()+". "+e.getNombre());
+            }
+            
+        }catch(Exception ex){
+                System.out.println(ex.getMessage());
+        }
+    }
+	
+	
+public interface CursoDAO extends Remote { 
+    public ArrayList<Curso> listarCursosPorNombre(String nombre) throws RemoteException;
+    public int insertarCurso(Curso curso) throws RemoteException;
+}
+
+public class CursoMySQL extends UnicastRemoteObject implements CursoDAO {
+    public CursoMySQL(int puerto)throws RemoteException{
+        super(puerto);
+    }
+    private Connection con;
+    private ResultSet rs;
+    private CallableStatement cs;
+    @Override
+    public ArrayList<Curso> listarCursosPorNombre(String nombre)throws RemoteException {
+        ArrayList<Curso> cursos = new ArrayList<>();
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call LISTAR_CURSOS_X_NOMBRE(?)}");
+            cs.setString("_nombre", nombre);
+            rs = cs.executeQuery();
+            while(rs.next()){
+                Curso us = new Curso();
+                us.setIdCurso(rs.getInt("id_curso"));
+                us.setNombre(rs.getString("nombre_curso"));
+                us.setClave(rs.getString("clave"));
+                us.setPrecio(rs.getDouble("precio"));
+                us.setActivo(true);
+                us.setCreditos(rs.getInt("creditos"));
+                us.setFechaFin(rs.getDate("fecha_fin"));
+                us.setFechaInicio(rs.getDate("fecha_inicio"));
+                us.setEspecialidad(new Especialidad());
+                us.getEspecialidad().setIdEspecialidad(rs.getInt("id_especialidad"));
+                us.getEspecialidad().setNombre(rs.getString("nombre_especialidad"));
+                cursos.add(us);
+            }
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{rs.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        return cursos;
+    }
+
+    @Override
+    public int insertarCurso(Curso curso) throws RemoteException {
+        int resultado=0;
+        try{
+            con = DBManager.getInstance().getConnection();
+            cs = con.prepareCall("{call INSERTAR_CURSO(?,?,?,?,?,?,?,?)}");
+            cs.registerOutParameter("_id_curso", 
+                    java.sql.Types.INTEGER);
+            cs.setInt("_fid_especialidad", curso.getEspecialidad().getIdEspecialidad());
+            cs.setString("_nombre", curso.getNombre());
+            cs.setDouble("_creditos", curso.getCreditos());
+            cs.setDouble("_precio", curso.getPrecio());
+            cs.setString("_clave", curso.getClave());
+            cs.setDate("_fecha_inicio", new Date(curso.getFechaInicio().getTime()));
+            cs.setDate("_fecha_fin", new Date(curso.getFechaFin().getTime()));
+            //cs.setBoolean("_activo", true);
+            cs.executeUpdate();
+            curso.setIdCurso(cs.getInt("_id_curso"));
+            System.out.println("Se inserto un usuario correctamente");
+            resultado = curso.getIdCurso();
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }finally{
+            try{con.close();}catch(Exception ex){System.out.println(ex.getMessage());}
+        }
+        
+        return resultado;
+    }
+    
+}
+
+private CursoDao cursoDao = null;
+    private EspecialidadDao especialidadDao = null;
+
+    public ServicioWS() {
+        String IP = "127.0.0.1";
+        String puerto = "1234";
+        System.setProperty("java.rmi.server.hostname","127.0.0.1");
+        
+        try{
+            cursoDao = (CursoDao) Naming.lookup("//" + IP+ ":" + puerto + "/"+"daoCurso");
+            //System.out.println("Curso Dao: "+cursoDao);
+            especialidadDao = (EspecialidadDao) Naming.lookup("//" + IP+ ":" + puerto + "/"+"daoEspecialidad");
+            //System.out.println("Especialidad Dao: "+especialidadDao);
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+

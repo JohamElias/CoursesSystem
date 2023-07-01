@@ -1,0 +1,12 @@
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\bin\Debug\IngeSoftVirtual.exe.config
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\bin\Debug\IngeSoftVirtual.exe
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\bin\Debug\IngeSoftVirtual.pdb
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.csproj.AssemblyReference.cache
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.csproj.SuggestedBindingRedirects.cache
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.frmListarCursos.resources
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.frmGestionarCursos.resources
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.Properties.Resources.resources
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.csproj.GenerateResource.cache
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.csproj.CoreCompileInputs.cache
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.exe
+D:\PUCP\LP2\Final\Lab14\FrontEndCSharp\IngeSoftVirtual\IngeSoftVirtual\obj\Debug\IngeSoftVirtual.pdb

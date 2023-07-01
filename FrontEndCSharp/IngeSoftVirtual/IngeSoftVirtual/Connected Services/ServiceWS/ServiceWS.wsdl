@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://services.ingesoft.pucp.edu.pe/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ServiceWS" targetNamespace="http://services.ingesoft.pucp.edu.pe/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="http://localhost:8080/ServicioWS/ServiceWS?xsd=1" namespace="http://services.ingesoft.pucp.edu.pe/" />
+    </xsd:schema>
+  </types>
+  <message name="InsertarCurso">
+    <part name="parameters" element="tns:InsertarCurso" />
+  </message>
+  <message name="InsertarCursoResponse">
+    <part name="parameters" element="tns:InsertarCursoResponse" />
+  </message>
+  <message name="hello">
+    <part name="parameters" element="tns:hello" />
+  </message>
+  <message name="helloResponse">
+    <part name="parameters" element="tns:helloResponse" />
+  </message>
+  <message name="ListarCursoPorNombre">
+    <part name="parameters" element="tns:ListarCursoPorNombre" />
+  </message>
+  <message name="ListarCursoPorNombreResponse">
+    <part name="parameters" element="tns:ListarCursoPorNombreResponse" />
+  </message>
+  <message name="ListarTodasEspecialidades">
+    <part name="parameters" element="tns:ListarTodasEspecialidades" />
+  </message>
+  <message name="ListarTodasEspecialidadesResponse">
+    <part name="parameters" element="tns:ListarTodasEspecialidadesResponse" />
+  </message>
+  <portType name="ServiceWS">
+    <operation name="InsertarCurso">
+      <input wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/InsertarCursoRequest" message="tns:InsertarCurso" />
+      <output wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/InsertarCursoResponse" message="tns:InsertarCursoResponse" />
+    </operation>
+    <operation name="hello">
+      <input wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/helloRequest" message="tns:hello" />
+      <output wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/helloResponse" message="tns:helloResponse" />
+    </operation>
+    <operation name="ListarCursoPorNombre">
+      <input wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/ListarCursoPorNombreRequest" message="tns:ListarCursoPorNombre" />
+      <output wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/ListarCursoPorNombreResponse" message="tns:ListarCursoPorNombreResponse" />
+    </operation>
+    <operation name="ListarTodasEspecialidades">
+      <input wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/ListarTodasEspecialidadesRequest" message="tns:ListarTodasEspecialidades" />
+      <output wsam:Action="http://services.ingesoft.pucp.edu.pe/ServiceWS/ListarTodasEspecialidadesResponse" message="tns:ListarTodasEspecialidadesResponse" />
+    </operation>
+  </portType>
+  <binding name="ServiceWSPortBinding" type="tns:ServiceWS">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="InsertarCurso">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="hello">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="ListarCursoPorNombre">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="ListarTodasEspecialidades">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="ServiceWS">
+    <port name="ServiceWSPort" binding="tns:ServiceWSPortBinding">
+      <soap:address location="http://localhost:8080/ServicioWS/ServiceWS" />
+    </port>
+  </service>
+</definitions>
